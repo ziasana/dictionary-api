@@ -1,5 +1,6 @@
 package org.example.dictionaryapi.service;
 
+import org.example.dictionaryapi.exception.NotFoundException;
 import org.example.dictionaryapi.model.Word;
 import org.example.dictionaryapi.repository.WordRepository;
 import org.springframework.data.crossstore.ChangeSetPersister;
@@ -25,17 +26,23 @@ public class WordService {
         return wordRepository.save(word);
     }
 
-    public Word findByWord(String word) {
-        return  wordRepository.findByWord(word)
-                .orElseThrow(() -> new RuntimeException("Word not found: " + word));
+    public Word findByWord(String word) throws NotFoundException {
+        return  wordRepository.findByWords(word)
+                .orElseThrow(() -> new NotFoundException("Word"));
     }
 
-    public Word update(Word word) {
-        return wordRepository.save(word);
+    public Word update(String word, Word newWord) throws NotFoundException {
+        Word oldWord = wordRepository.findByWords(word).orElseThrow(() -> new NotFoundException("Word"));
+        Word update = null;
+        if(oldWord != null){
+           update= new Word(newWord.getWords(), newWord.getMeaning(), oldWord.getExample(), oldWord.getSynonyms());
+        }
+        assert update != null;
+        return wordRepository.save(update);
     }
 
-    public void deleteByWord(String word) {
-        Word w = findByWord(word);
-        wordRepository.delete(w);
+    public void deleteByWord(String word) throws NotFoundException {
+        Optional<Word> w = Optional.ofNullable(wordRepository.findByWords(word).orElseThrow(() -> new NotFoundException("Word")));
+        wordRepository.delete(w.orElseThrow(() -> new NotFoundException("Word")));
     }
 }
