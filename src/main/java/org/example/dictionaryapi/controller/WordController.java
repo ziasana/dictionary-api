@@ -3,6 +3,8 @@ package org.example.dictionaryapi.controller;
 import org.example.dictionaryapi.exception.NotFoundException;
 import org.example.dictionaryapi.model.Word;
 import org.example.dictionaryapi.service.WordService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
