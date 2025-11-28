@@ -25,6 +25,19 @@ modern API documentation.
 -   Swagger (springdoc-openapi)
 -   Docker (optional)
 
+  ## Requirements
+- Java 21
+- Maven 3.8+
+- Optional: Docker (if needed)
+
+## Build & Test
+```bash
+# Build the project
+mvn clean install
+
+# Run tests
+mvn test
+
 ## 📂 Project Structure
 
     src/main/java/com/example/dictionary
