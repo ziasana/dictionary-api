@@ -10,6 +10,9 @@ modern API documentation.
 -   **CRUD operations** for vocabulary words\
 -   **MongoDB** integration (Spring Data)\
 -   **Caching with Caffeine** (`@Cacheable`, `@CacheEvict`)\
+- - **Optional caching**:
+    - In-memory cache (Caffeine, default in master)
+    - Redis distributed cache (modern, non-deprecated RedisSerializer.json(), available in feature/redis)
 -   **Swagger / OpenAPI 3** documentation\
 -   **Exception handling**\
 -   Lightweight & production-ready structure\
@@ -17,13 +20,14 @@ modern API documentation.
 
 ## 🧱 Tech Stack
 
--   Java 17+
+-   Java 21
 -   Maven 3.8+
 -   Spring Boot 3
 -   Spring Web
 -   Spring Data MongoDB
--   Spring Cache (Caffeine)
+-   Spring Cache (Redis)
 -   Swagger (springdoc-openapi)
+-   Sonar Qube
 -   Docker (optional)
 
 
@@ -58,6 +62,14 @@ GET /api/words/{word}
 ### Create a new word
 
 POST /api/words
+Example body:
+{
+  "word": "Hund",
+  "meaning": "Dog",
+  "example": "Der Hund spielt im Garten.",
+  "synonyms": "Hündchen, Köter"
+}
+
 
 ### Update a word
 
@@ -76,6 +88,10 @@ public Word findByWord(String word) { ... }
 @CacheEvict(value = "word", key = "#word.word")
 public Word update(Word word) { ... }
 ```
+## Caching (Optional)
+
+- In `master` branch: uses in-memory cache (Caffeine)
+- In `feature/redis` branch: uses Redis for distributed caching
 
 ## 🔧 Configuration
 
@@ -83,7 +99,13 @@ public Word update(Word word) { ... }
       data:
         mongodb:
           uri: mongodb://localhost:27017/dictionarydb
-
+      redis:
+        host: localhost
+        port: 6379
+        timeout: 3000ms
+      cache:
+        type: redis
+        cache-names: words
 ## 📘 Swagger UI
 
 http://localhost:8080/swagger-ui.html
@@ -98,7 +120,6 @@ http://localhost:8080/swagger-ui.html
 
 ## 🧪 Future Improvements
 
--   Redis cache\
 -   JWT auth\
 -   Pagination\
 -   Tests\
