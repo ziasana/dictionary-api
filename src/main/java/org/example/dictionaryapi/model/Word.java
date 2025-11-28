@@ -3,10 +3,12 @@ package org.example.dictionaryapi.model;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 
+import java.io.Serializable;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Word{
+public class Word {
         @Id
         private String id;
         private String words;

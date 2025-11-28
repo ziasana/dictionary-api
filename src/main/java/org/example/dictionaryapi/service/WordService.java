@@ -3,6 +3,8 @@ package org.example.dictionaryapi.service;
 import org.example.dictionaryapi.exception.NotFoundException;
 import org.example.dictionaryapi.model.Word;
 import org.example.dictionaryapi.repository.WordRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;

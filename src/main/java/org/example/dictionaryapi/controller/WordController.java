@@ -3,6 +3,8 @@ package org.example.dictionaryapi.controller;
 import org.example.dictionaryapi.exception.NotFoundException;
 import org.example.dictionaryapi.model.Word;
 import org.example.dictionaryapi.service.WordService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +16,8 @@ import java.util.List;
 public class WordController {
 
     private final WordService wordService;
-
+    @Autowired
+    private StringRedisTemplate template;
     public WordController(WordService wordService) {
         this.wordService = wordService;
     }
@@ -26,7 +29,8 @@ public class WordController {
 
     @GetMapping("/{word}")
     public Word findByWord(@PathVariable String word) throws NotFoundException {
-        return wordService.findByWord(word);
+        Word n= wordService.findByWord(word);
+        return n;
     }
 
     @PostMapping
@@ -42,5 +46,11 @@ public class WordController {
     @DeleteMapping("/{word}")
     public void deleteByWord(@PathVariable String word) throws NotFoundException {
        wordService.deleteByWord(word);
+    }
+
+    @GetMapping("/redis")
+    public String testRedis() {
+        template.opsForValue().set("spring-test", "working");
+        return template.opsForValue().get("spring-test");
     }
 }
