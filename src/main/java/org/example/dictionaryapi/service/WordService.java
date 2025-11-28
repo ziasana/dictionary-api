@@ -3,12 +3,12 @@ package org.example.dictionaryapi.service;
 import org.example.dictionaryapi.exception.NotFoundException;
 import org.example.dictionaryapi.model.Word;
 import org.example.dictionaryapi.repository.WordRepository;
-import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class WordService {
@@ -26,23 +26,30 @@ public class WordService {
         return wordRepository.save(word);
     }
 
+    @Cacheable(value = "words", key = "#word")
     public Word findByWord(String word) throws NotFoundException {
         return  wordRepository.findByWords(word)
                 .orElseThrow(() -> new NotFoundException("Word"));
     }
 
+    @CachePut(value = "words", key= "#word")
     public Word update(String word, Word newWord) throws NotFoundException {
-        Word oldWord = wordRepository.findByWords(word).orElseThrow(() -> new NotFoundException("Word"));
-        Word update = null;
-        if(oldWord != null){
-           update= new Word(newWord.getWords(), newWord.getMeaning(), oldWord.getExample(), oldWord.getSynonyms());
-        }
-        assert update != null;
-        return wordRepository.save(update);
+        Word oldWord = wordRepository.findByWords(word)
+                .orElseThrow(() -> new NotFoundException("Word"));
+
+        oldWord.setWords(newWord.getWords());
+        oldWord.setMeaning(newWord.getMeaning());
+        oldWord.setExample(newWord.getExample());
+        oldWord.setSynonyms(newWord.getSynonyms());
+
+        return wordRepository.save(oldWord);
     }
 
+    @CacheEvict(value = "words", key= "#word")
     public void deleteByWord(String word) throws NotFoundException {
-        Optional<Word> w = Optional.ofNullable(wordRepository.findByWords(word).orElseThrow(() -> new NotFoundException("Word")));
-        wordRepository.delete(w.orElseThrow(() -> new NotFoundException("Word")));
+        if (!wordRepository.existsByWords(word)) {
+            throw new NotFoundException("Word not found");
+        }
+        wordRepository.deleteByWords(word);
     }
 }
