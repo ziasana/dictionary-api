@@ -18,6 +18,7 @@ modern API documentation.
 ## 🧱 Tech Stack
 
 -   Java 17+
+-   Maven 3.8+
 -   Spring Boot 3
 -   Spring Web
 -   Spring Data MongoDB
@@ -25,10 +26,6 @@ modern API documentation.
 -   Swagger (springdoc-openapi)
 -   Docker (optional)
 
-  ## Requirements
-- Java 21
-- Maven 3.8+
-- Optional: Docker (if needed)
 
 ## Build & Test
 ```bash
